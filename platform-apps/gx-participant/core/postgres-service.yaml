@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gx-participant-postgres
+  namespace: gx-participant
+spec:
+  selector:
+    app.kubernetes.io/name: gx-participant-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

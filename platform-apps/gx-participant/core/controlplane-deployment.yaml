@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gx-participant-controlplane
+  namespace: gx-participant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gx-participant-controlplane
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gx-participant-controlplane
+    spec:
+      containers:
+        - name: controlplane
+          image: ghcr.io/REPLACE_ME/controlplane:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EDC_PARTICIPANT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_IAM_ISSUER_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_IAM_DID_WEB_USE_HTTPS
+              value: "true"
+            - name: WEB_HTTP_PORT
+              value: "8080"
+            - name: WEB_HTTP_PATH
+              value: /api
+            - name: WEB_HTTP_MANAGEMENT_PORT
+              value: "8081"
+            - name: WEB_HTTP_MANAGEMENT_PATH
+              value: /api/management
+            - name: WEB_HTTP_MANAGEMENT_AUTH_TYPE
+              value: tokenbased
+            - name: WEB_HTTP_MANAGEMENT_AUTH_KEY
+              value: password
+            - name: WEB_HTTP_CONTROL_PORT
+              value: "8083"
+            - name: WEB_HTTP_CONTROL_PATH
+              value: /api/control
+            - name: WEB_HTTP_PROTOCOL_PORT
+              value: "8082"
+            - name: WEB_HTTP_PROTOCOL_PATH
+              value: /api/dsp
+            - name: WEB_HTTP_CATALOG_PORT
+              value: "8084"
+            - name: WEB_HTTP_CATALOG_PATH
+              value: /api/catalog
+            - name: WEB_HTTP_CATALOG_AUTH_TYPE
+              value: tokenbased
+            - name: WEB_HTTP_CATALOG_AUTH_KEY
+              value: password
+            - name: EDC_DSP_CALLBACK_ADDRESS
+              value: http://gx-participant-controlplane:8082/api/dsp
+            - name: EDC_IAM_STS_PRIVATEKEY_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: participant-private-key-alias.txt
+            - name: EDC_IAM_STS_PUBLICKEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID_KEY_ID
+            - name: EDC_VAULT_HASHICORP_URL
+              value: http://gx-participant-vault:8200
+            - name: EDC_VAULT_HASHICORP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: EDC_VAULT_HASHICORP_TOKEN
+            - name: EDC_IH_AUDIENCE_REGISTRY_PATH
+              value: /etc/registry/registry.json
+            - name: EDC_MVD_PARTICIPANTS_LIST_FILE
+              value: /etc/participants/participants.json
+            - name: EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS
+              value: "10"
+            - name: EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS
+              value: "10"
+            - name: EDC_DATASOURCE_DEFAULT_URL
+              value: jdbc:postgresql://gx-participant-postgres:5432/participant
+            - name: EDC_DATASOURCE_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: POSTGRES_USER
+            - name: EDC_DATASOURCE_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: POSTGRES_PASSWORD
+            - name: EDC_SQL_SCHEMA_AUTOCREATE
+              value: "true"
+            - name: EDC_IAM_STS_OAUTH_TOKEN_URL
+              value: http://gx-participant-identityhub:7086/api/sts/token
+            - name: EDC_IAM_STS_OAUTH_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: participant-sts-client-secret-alias.txt
+          ports:
+            - containerPort: 8080
+              name: web
+            - containerPort: 8081
+              name: management
+            - containerPort: 8082
+              name: protocol
+            - containerPort: 8083
+              name: control
+            - containerPort: 8084
+              name: catalog
+          readinessProbe:
+            httpGet:
+              path: /api/check/readiness
+              port: 8080
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/check/liveness
+              port: 8080
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /api/check/startup
+              port: 8080
+            failureThreshold: 20
+            periodSeconds: 5
+          volumeMounts:
+            - name: participants
+              mountPath: /etc/participants
+              readOnly: true
+            - name: registry
+              mountPath: /etc/registry
+              readOnly: true
+      volumes:
+        - name: participants
+          configMap:
+            name: participant-metadata
+            items:
+              - key: participants.json
+                path: participants.json
+        - name: registry
+          configMap:
+            name: participant-metadata
+            items:
+              - key: registry.json
+                path: registry.json

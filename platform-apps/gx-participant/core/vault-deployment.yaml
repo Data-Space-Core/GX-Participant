@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gx-participant-vault
+  namespace: gx-participant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gx-participant-vault
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gx-participant-vault
+    spec:
+      containers:
+        - name: vault
+          image: hashicorp/vault:1.18
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - -dev
+            - -dev-listen-address=0.0.0.0:8200
+            - -dev-root-token-id=$(VAULT_DEV_ROOT_TOKEN_ID)
+          env:
+            - name: VAULT_DEV_ROOT_TOKEN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: VAULT_DEV_ROOT_TOKEN_ID
+            - name: VAULT_ADDR
+              value: http://127.0.0.1:8200
+          ports:
+            - containerPort: 8200
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true
+              port: 8200
+            initialDelaySeconds: 5
+            periodSeconds: 5

@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gx-participant-dataplane
+  namespace: gx-participant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gx-participant-dataplane
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gx-participant-dataplane
+    spec:
+      containers:
+        - name: dataplane
+          image: ghcr.io/REPLACE_ME/dataplane:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EDC_HOSTNAME
+              value: gx-participant-dataplane
+            - name: EDC_RUNTIME_ID
+              value: gx-participant1-dataplane
+            - name: EDC_PARTICIPANT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID_KEY_ID
+            - name: EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: participant-private-key-alias.txt
+            - name: EDC_DPF_SELECTOR_URL
+              value: http://gx-participant-controlplane:8083/api/control/v1/dataplanes
+            - name: WEB_HTTP_PORT
+              value: "8080"
+            - name: WEB_HTTP_PATH
+              value: /api
+            - name: WEB_HTTP_CONTROL_PORT
+              value: "8083"
+            - name: WEB_HTTP_CONTROL_PATH
+              value: /api/control
+            - name: WEB_HTTP_PUBLIC_PORT
+              value: "11001"
+            - name: WEB_HTTP_PUBLIC_PATH
+              value: /api/public
+            - name: EDC_VAULT_HASHICORP_URL
+              value: http://gx-participant-vault:8200
+            - name: EDC_VAULT_HASHICORP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: EDC_VAULT_HASHICORP_TOKEN
+            - name: EDC_DATASOURCE_DEFAULT_URL
+              value: jdbc:postgresql://gx-participant-postgres:5432/participant
+            - name: EDC_DATASOURCE_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: POSTGRES_USER
+            - name: EDC_DATASOURCE_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: POSTGRES_PASSWORD
+            - name: EDC_SQL_SCHEMA_AUTOCREATE
+              value: "true"
+            - name: EDC_IAM_STS_OAUTH_TOKEN_URL
+              value: http://gx-participant-identityhub:7086/api/sts/token
+            - name: EDC_IAM_STS_OAUTH_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: participant-sts-client-secret-alias.txt
+          ports:
+            - containerPort: 8080
+              name: web
+            - containerPort: 8083
+              name: control
+            - containerPort: 11001
+              name: public
+          readinessProbe:
+            httpGet:
+              path: /api/check/readiness
+              port: 8080
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/check/liveness
+              port: 8080
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /api/check/startup
+              port: 8080
+            failureThreshold: 20
+            periodSeconds: 5

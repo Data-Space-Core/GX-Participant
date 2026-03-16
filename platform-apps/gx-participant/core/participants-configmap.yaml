@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: participant-metadata
+  namespace: gx-participant
+data:
+  participants.json: |
+    {
+      "gx-participant1": "did:web:gx-participant1.dil.collab-cloud.eu:identity",
+      "gx-participant2": "did:web:gx-participant2.dil.collab-cloud.eu:identity",
+      "gxdch-issuer": "did:web:gxdch.dil.collab-cloud.eu:issuer"
+    }
+  registry.json: |
+    {
+      "gx-participant1": "did:web:gx-participant1.dil.collab-cloud.eu:identity",
+      "gx-participant2": "did:web:gx-participant2.dil.collab-cloud.eu:identity",
+      "gxdch-issuer": "did:web:gxdch.dil.collab-cloud.eu:issuer"
+    }

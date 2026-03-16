@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: participant-settings
+  namespace: gx-participant
+data:
+  PARTICIPANT_NAME: gx-participant1
+  PARTICIPANT_NAMESPACE: gx-participant
+  PARTICIPANT_HOST: gx-participant1.dil.collab-cloud.eu
+  PARTICIPANT_IDENTITY_PATH: /identity
+  PARTICIPANT_DID: did:web:gx-participant1.dil.collab-cloud.eu:identity
+  PARTICIPANT_DID_KEY_ID: did:web:gx-participant1.dil.collab-cloud.eu:identity#key-1
+  PARTICIPANT_DSP_URL: https://gx-participant1.dil.collab-cloud.eu/cp/api/dsp
+  PARTICIPANT_CREDENTIALS_URL: https://gx-participant1.dil.collab-cloud.eu/identity/api/credentials/v1/participants/ZGlkOndlYjpneC1wYXJ0aWNpcGFudDEuZGlsLmNvbGxhYi1jbG91ZC5ldTppZGVudGl0eQ==
+  GXDCH_ISSUER_DID: did:web:gxdch.dil.collab-cloud.eu:issuer
+  GXDCH_ISSUER_IDENTITY_URL: https://gxdch.dil.collab-cloud.eu/issuer/api/identity
+  GXDCH_ISSUER_ADMIN_URL: https://gxdch.dil.collab-cloud.eu/issuer/api/admin
+  GXDCH_ISSUER_ISSUANCE_URL: https://gxdch.dil.collab-cloud.eu/issuer/api/issuance
+  GXDCH_COMPLIANCE_URL: https://compliance.gxdch.dil.collab-cloud.eu/main
+  GXDCH_REGISTRY_URL: https://registry.gxdch.dil.collab-cloud.eu/main
+  GXDCH_NOTARY_URL: https://registrationnumber.notary.gxdch.dil.collab-cloud.eu/main
+  REGISTRY_JSON: |
+    {
+      "gx-participant1": "did:web:gx-participant1.dil.collab-cloud.eu:identity",
+      "gx-participant2": "did:web:gx-participant2.dil.collab-cloud.eu:identity",
+      "gxdch-issuer": "did:web:gxdch.dil.collab-cloud.eu:issuer"
+    }

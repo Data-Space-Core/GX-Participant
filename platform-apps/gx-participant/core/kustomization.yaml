@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - stack-secret.yaml
+  - participant-settings-configmap.yaml
+  - participants-configmap.yaml
+  - postgres-pvc.yaml
+  - postgres-service.yaml
+  - postgres-deployment.yaml
+  - vault-service.yaml
+  - vault-deployment.yaml
+  - vault-seed-job.yaml
+  - minio-pvc.yaml
+  - minio-service.yaml
+  - minio-deployment.yaml
+  - minio-bootstrap-job.yaml
+  - did-server-service.yaml
+  - did-server-deployment.yaml
+  - identityhub-service.yaml
+  - identityhub-deployment.yaml
+  - controlplane-service.yaml
+  - controlplane-deployment.yaml
+  - dataplane-service.yaml
+  - dataplane-deployment.yaml

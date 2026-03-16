@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gx-participant-vault-seed
+  namespace: gx-participant
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: vault-seed
+          image: hashicorp/vault:1.18
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              until vault status >/dev/null 2>&1; do
+                echo "waiting for vault"
+                sleep 2
+              done
+              participant_did="$(cat /bootstrap/participant-did.txt)"
+              participant_name="$(cat /bootstrap/participant-name.txt)"
+              sts_client_secret="$(cat /bootstrap/sts-client-secret.txt)"
+              vault kv put "secret/key-1" content="$(cat /bootstrap/sts-private-key.pem)"
+              vault kv put "secret/${participant_did}-alias" content="$(cat /bootstrap/sts-private-key.pem)"
+              vault kv put "secret/${participant_did}#key-1" content="$(cat /bootstrap/sts-public-key.pem)"
+              vault kv put "secret/${participant_name}-publickey" content="$(cat /bootstrap/sts-public-key.pem)"
+              vault kv put "secret/${participant_did}-sts-client-secret" content="${sts_client_secret}"
+          env:
+            - name: VAULT_ADDR
+              value: http://gx-participant-vault:8200
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: EDC_VAULT_HASHICORP_TOKEN
+          volumeMounts:
+            - name: bootstrap
+              mountPath: /bootstrap
+              readOnly: true
+      volumes:
+        - name: bootstrap
+          secret:
+            secretName: participant-bootstrap

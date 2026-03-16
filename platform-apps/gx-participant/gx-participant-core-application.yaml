@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gx-participant-core
+  namespace: argocd
+spec:
+  project: gx-participant
+  source:
+    repoURL: https://github.com/Data-Space-Core/GX-Participant.git
+    targetRevision: main
+    path: platform-apps/gx-participant/core
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gx-participant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

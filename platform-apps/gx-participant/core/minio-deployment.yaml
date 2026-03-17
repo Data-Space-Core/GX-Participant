@@ -33,6 +33,41 @@ spec:
                 secretKeyRef:
                   name: gx-participant-stack
                   key: MINIO_ROOT_PASSWORD
+            - name: MINIO_BROWSER_REDIRECT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_BROWSER_REDIRECT_URL
+            - name: MINIO_IDENTITY_OPENID_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_CLIENT_ID
+            - name: MINIO_IDENTITY_OPENID_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_CLIENT_SECRET
+            - name: MINIO_IDENTITY_OPENID_CONFIG_URL
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_CONFIG_URL
+            - name: MINIO_IDENTITY_OPENID_DISPLAY_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_DISPLAY_NAME
+            - name: MINIO_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC
+            - name: MINIO_IDENTITY_OPENID_SCOPES
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-minio-oidc
+                  key: MINIO_IDENTITY_OPENID_SCOPES
           ports:
             - containerPort: 9000
               name: api

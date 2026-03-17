@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: participant-bootstrap
-  namespace: p-gx-participant1
+  namespace: gx-participant
 type: Opaque
 stringData:
   participant-name.txt: gx-participant1
@@ -10,24 +10,24 @@ stringData:
   participant-public-key-alias.txt: gx-participant1-publickey
   participant-private-key-alias.txt: did:web:identity.gx-participant1.dil.collab-cloud.eu-alias
   participant-sts-client-secret-alias.txt: did:web:identity.gx-participant1.dil.collab-cloud.eu-sts-client-secret
-  sts-client-secret.txt: N7O3tw6re2UJi3/jNv6W0qzXnnOfO+4Bb0Dvh7wmXwk=
+  sts-client-secret.txt: rGFTTP4BLk2ES34WBb1ThKGwwCO2HFvvwy8yyPo4Nhk=
   sts-private-key.pem: |
     -----BEGIN EC PRIVATE KEY-----
-    MHcCAQEEILDL5nraIGNazYhFWqlC06+S7rZriaTPVmn5PMwW5PFfoAoGCCqGSM49
-    AwEHoUQDQgAEeJeHzFou+k1zCxVWbVQ+K6e5tFywGsx1aZaRnTS9vKnl7dNhDNR9
-    mqQD+4cGh9BH+zU0W7b7YlWt8sn8ibzE/w==
+    MHcCAQEEIKZS2KG/5yX2TTHsjoOEgeUdSHERBwL+GCTgWQ4h+XhJoAoGCCqGSM49
+    AwEHoUQDQgAE0U6pohtpTWFyoazyqPMypvuCUopkoz/OzVbU0VqG0w7BHQHKe623
+    IAVoLFcHviN72iZ26fD2au3dEs7t7XzLSw==
     -----END EC PRIVATE KEY-----
   sts-public-key.pem: |
     -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEeJeHzFou+k1zCxVWbVQ+K6e5tFyw
-    Gsx1aZaRnTS9vKnl7dNhDNR9mqQD+4cGh9BH+zU0W7b7YlWt8sn8ibzE/w==
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0U6pohtpTWFyoazyqPMypvuCUopk
+    oz/OzVbU0VqG0w7BHQHKe623IAVoLFcHviN72iZ26fD2au3dEs7t7XzLSw==
     -----END PUBLIC KEY-----
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: participant-did-config
-  namespace: p-gx-participant1
+  namespace: gx-participant
 data:
   nginx.conf: |
     events {}
@@ -55,8 +55,8 @@ data:
           "publicKeyJwk": {
             "kty": "EC",
             "crv": "P-256",
-            "x": "eJeHzFou-k1zCxVWbVQ-K6e5tFywGsx1aZaRnTS9vKk=",
-            "y": "5e3TYQzUfZqkA_uHBofQR_s1NFu2-2JVrfLJ_Im8xP8="
+            "x": "0U6pohtpTWFyoazyqPMypvuCUopkoz_OzVbU0VqG0w4=",
+            "y": "wR0BynuttyAFaCxXB74je9omdunw9mrt3RLO7e18y0s="
           }
         }
       ],

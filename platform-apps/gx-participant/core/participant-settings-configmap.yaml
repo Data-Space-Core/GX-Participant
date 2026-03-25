@@ -11,7 +11,7 @@ data:
   PARTICIPANT_DID: did:web:gx-participant1.dil.collab-cloud.eu:identity
   PARTICIPANT_DID_KEY_ID: did:web:gx-participant1.dil.collab-cloud.eu:identity#key-1
   PARTICIPANT_DSP_URL: https://gx-participant1.dil.collab-cloud.eu/cp/api/dsp
-  PARTICIPANT_CREDENTIALS_URL: https://gx-participant1.dil.collab-cloud.eu/identity/api/credentials/v1/participants/ZGlkOndlYjpneC1wYXJ0aWNpcGFudDEuZGlsLmNvbGxhYi1jbG91ZC5ldTppZGVudGl0eQ==
+  PARTICIPANT_CREDENTIALS_URL: https://credentials.gx-participant1.dil.collab-cloud.eu/api/credentials/v1/participants/ZGlkOndlYjpneC1wYXJ0aWNpcGFudDEuZGlsLmNvbGxhYi1jbG91ZC5ldTppZGVudGl0eQ==
   GXDCH_ISSUER_DID: did:web:gxdch.dil.collab-cloud.eu:issuer
   GXDCH_ISSUER_IDENTITY_URL: https://gxdch.dil.collab-cloud.eu/issuer/api/identity
   GXDCH_ISSUER_ADMIN_URL: https://gxdch.dil.collab-cloud.eu/issuer/api/admin

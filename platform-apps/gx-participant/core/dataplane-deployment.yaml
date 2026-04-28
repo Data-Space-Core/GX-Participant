@@ -21,7 +21,10 @@ spec:
             - name: EDC_HOSTNAME
               value: gx-participant-dataplane
             - name: EDC_RUNTIME_ID
-              value: gx-participant1-dataplane
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DATAPLANE_RUNTIME_ID
             - name: EDC_PARTICIPANT_ID
               valueFrom:
                 configMapKeyRef:

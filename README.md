@@ -62,7 +62,6 @@ This stack deploys the participant runtime side:
 - `gx-participant-did`
 - `gx-participant-postgres`
 - `gx-participant-vault`
-- `gx-participant-minio`
 
 It is intended to be installed inside a tenant vCluster such as `gx-participant1`.
 
@@ -187,9 +186,6 @@ kubectl apply -n argocd -f platform-apps/argocd/gx-participant-application.yaml
   - `5432`
 - `gx-participant-vault`
   - `8200`
-- `gx-participant-minio`
-  - `9000` S3 API
-  - `9001` console
 
 ## Suggested Envoy Gateway Routes
 
@@ -227,7 +223,7 @@ The manifests already include placeholders for the central `gxdch` governance en
 - registry API
 - notary API
 
-Update `platform-apps/gx-participant/core/participant-settings-configmap.yaml` with your real URLs before sync.
+ManagementAPI creates the tenant-specific `participant-settings` and `participant-metadata` ConfigMaps from the tenant name and domain suffix before this app syncs.
 
 These URLs are used for:
 
@@ -249,10 +245,6 @@ This prints example `curl` commands for:
 - registering the participant in the central issuer admin API
 
 It does not call the APIs automatically, because the exact issuer auth and external URLs vary by environment.
-
-## MinIO
-
-MinIO is included as simple object storage for participant-owned assets. It is not fully wired into a specific EDC asset definition out of the box. Treat it as the tenant-local object store to back future HTTP/S3-style assets.
 
 ## Operational Notes
 

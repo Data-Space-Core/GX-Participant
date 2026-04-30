@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gx-participant-bootstrap
+  namespace: gx-participant
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: gx-participant-bootstrap
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: ghcr.io/data-space-core/gx-participant-bootstrap:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PARTICIPANT_SETTINGS_CONFIGMAP
+              value: participant-settings

@@ -36,6 +36,9 @@ scripts/
   build-mvd-participant-images.sh
   generate-participant-bootstrap.sh
   render-participant-seed.sh
+bootstrap/
+  Dockerfile
+  entrypoint.sh
 ```
 
 ## Repository URL
@@ -87,7 +90,36 @@ After pushing the images, update:
 - `platform-apps/gx-participant/core/dataplane-deployment.yaml`
 - `platform-apps/gx-participant/core/identityhub-deployment.yaml`
 
-### 2. Generate participant bootstrap material
+### 2. Build and publish the bootstrap image
+
+The Argo CD application includes a `PreSync` job that generates participant bootstrap
+material inside the tenant cluster before the participant deployments start.
+Build and publish the bootstrap image used by that job:
+
+```bash
+docker build -t ghcr.io/data-space-core/gx-participant-bootstrap:latest bootstrap
+docker push ghcr.io/data-space-core/gx-participant-bootstrap:latest
+```
+
+If you use another image tag, update:
+
+- `platform-apps/gx-participant/core/bootstrap-job.yaml`
+
+The job reads `PARTICIPANT_NAME`, `PARTICIPANT_HOST`, and `PARTICIPANT_IDENTITY_PATH`
+from `ConfigMap/participant-settings`. ManagementAPI creates that ConfigMap for
+managed tenants before this application syncs.
+
+The job creates:
+
+- `Secret/participant-bootstrap`
+- `ConfigMap/participant-did-config`
+
+If both resources already exist, the job exits without rotating keys.
+
+### 3. Generate participant bootstrap material for standalone deployments
+
+Run this script only for standalone/manual deployments where Argo CD is not running
+the bootstrap job.
 
 Before syncing the stack, generate:
 
@@ -132,7 +164,7 @@ so your gateway should rewrite:
 /identity/did.json -> /did.json
 ```
 
-This bootstrap creates:
+The manual bootstrap creates:
 
 - `Secret/participant-bootstrap`
 - `ConfigMap/participant-did-config`
@@ -143,17 +175,12 @@ The stack expects those resources to exist before sync.
 
 1. Push this repository to GitHub.
 2. Build and publish the participant images.
-3. Update the image references in the deployment manifests.
-4. Create the namespace in the tenant cluster once:
+3. Build and publish the bootstrap image.
+4. Update the image references in the deployment manifests.
+5. Create the namespace in the tenant cluster once:
 
 ```bash
 kubectl create namespace gx-participant
-```
-
-5. Generate and apply the participant bootstrap:
-
-```bash
-./scripts/generate-participant-bootstrap.sh gx-participant1 gx-participant1.dil.collab-cloud.eu/identity gx-participant | kubectl apply -f -
 ```
 
 6. Apply the root ArgoCD application:
@@ -239,7 +266,8 @@ After the stack is up and externally reachable, use:
 ./scripts/render-participant-seed.sh gx-participant1 gx-participant1.dil.collab-cloud.eu/identity
 ```
 
-This prints example `curl` commands for:
+This script is not required for the Kubernetes deployment to start. It prints example
+`curl` commands for post-deployment application seeding:
 
 - creating the participant context in its own Identity Hub
 - registering the participant in the central issuer admin API

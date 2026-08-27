@@ -77,6 +77,8 @@ spec:
                 secretKeyRef:
                   name: gx-participant-stack
                   key: EDC_VAULT_HASHICORP_TOKEN
+            - name: EDC_VAULT_HASHICORP_API_SECRET_PATH
+              value: /v1/edc
             - name: EDC_IH_AUDIENCE_REGISTRY_PATH
               value: /etc/registry/registry.json
             - name: EDC_MVD_PARTICIPANTS_LIST_FILE

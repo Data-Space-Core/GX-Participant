@@ -23,11 +23,12 @@ spec:
               participant_did="$(cat /bootstrap/participant-did.txt)"
               participant_name="$(cat /bootstrap/participant-name.txt)"
               sts_client_secret="$(cat /bootstrap/sts-client-secret.txt)"
-              vault kv put "secret/key-1" content="$(cat /bootstrap/sts-private-key.pem)"
-              vault kv put "secret/${participant_did}-alias" content="$(cat /bootstrap/sts-private-key.pem)"
-              vault kv put "secret/${participant_did}#key-1" content="$(cat /bootstrap/sts-public-key.pem)"
-              vault kv put "secret/${participant_name}-publickey" content="$(cat /bootstrap/sts-public-key.pem)"
-              vault kv put "secret/${participant_did}-sts-client-secret" content="${sts_client_secret}"
+              vault secrets enable -path=edc -version=1 kv >/dev/null 2>&1 || true
+              vault write "edc/key-1" content="$(cat /bootstrap/sts-private-key.pem)"
+              vault write "edc/${participant_did}-alias" content="$(cat /bootstrap/sts-private-key.pem)"
+              vault write "edc/${participant_did}#key-1" content="$(cat /bootstrap/sts-public-key.pem)"
+              vault write "edc/${participant_name}-publickey" content="$(cat /bootstrap/sts-public-key.pem)"
+              vault write "edc/${participant_did}-sts-client-secret" content="${sts_client_secret}"
           env:
             - name: VAULT_ADDR
               value: http://gx-participant-vault:8200

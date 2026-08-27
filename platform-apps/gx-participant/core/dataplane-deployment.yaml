@@ -62,7 +62,7 @@ spec:
                   name: gx-participant-stack
                   key: EDC_VAULT_HASHICORP_TOKEN
             - name: EDC_VAULT_HASHICORP_API_SECRET_PATH
-              value: /v1/edc
+              value: /v1/secret
             - name: EDC_DATASOURCE_DEFAULT_URL
               value: jdbc:postgresql://gx-participant-postgres:5432/participant
             - name: EDC_DATASOURCE_DEFAULT_USER

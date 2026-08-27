@@ -59,7 +59,10 @@ spec:
             - name: WEB_HTTP_CATALOG_AUTH_KEY
               value: password
             - name: EDC_DSP_CALLBACK_ADDRESS
-              value: http://gx-participant-controlplane:8082/api/dsp
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DSP_URL
             - name: EDC_IAM_STS_PRIVATEKEY_ALIAS
               valueFrom:
                 secretKeyRef:
@@ -78,7 +81,7 @@ spec:
                   name: gx-participant-stack
                   key: EDC_VAULT_HASHICORP_TOKEN
             - name: EDC_VAULT_HASHICORP_API_SECRET_PATH
-              value: /v1/edc
+              value: /v1/secret
             - name: EDC_IH_AUDIENCE_REGISTRY_PATH
               value: /etc/registry/registry.json
             - name: EDC_MVD_PARTICIPANTS_LIST_FILE

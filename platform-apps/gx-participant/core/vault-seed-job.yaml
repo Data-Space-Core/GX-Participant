@@ -20,15 +20,31 @@ spec:
                 echo "waiting for vault"
                 sleep 2
               done
-              participant_did="$(cat /bootstrap/participant-did.txt)"
+              encode_alias() {
+                printf "%s" "$1" | sed 's/:/%3A/g; s/#/%23/g'
+              }
+              write_secret() {
+                vault kv put "secret/$1" content="$2"
+              }
+
+              bootstrap_participant_did="$(cat /bootstrap/participant-did.txt)"
+              participant_did="${PARTICIPANT_DID:-$bootstrap_participant_did}"
               participant_name="$(cat /bootstrap/participant-name.txt)"
               sts_client_secret="$(cat /bootstrap/sts-client-secret.txt)"
-              vault secrets enable -path=edc -version=1 kv >/dev/null 2>&1 || true
-              vault write "edc/key-1" content="$(cat /bootstrap/sts-private-key.pem)"
-              vault write "edc/${participant_did}-alias" content="$(cat /bootstrap/sts-private-key.pem)"
-              vault write "edc/${participant_did}#key-1" content="$(cat /bootstrap/sts-public-key.pem)"
-              vault write "edc/${participant_name}-publickey" content="$(cat /bootstrap/sts-public-key.pem)"
-              vault write "edc/${participant_did}-sts-client-secret" content="${sts_client_secret}"
+              private_key="$(cat /bootstrap/sts-private-key.pem)"
+              public_key="$(cat /bootstrap/sts-public-key.pem)"
+
+              vault secrets enable -path=secret -version=2 kv >/dev/null 2>&1 || true
+              write_secret "super-user-apikey" "${EDC_IH_API_SUPERUSER_KEY}"
+              write_secret "key-1" "${private_key}"
+              write_secret "${participant_name}-publickey" "${public_key}"
+
+              for did in "${bootstrap_participant_did}" "${participant_did}"; do
+                encoded_did="$(encode_alias "${did}")"
+                write_secret "${encoded_did}-alias" "${private_key}"
+                write_secret "${encoded_did}%23key-1" "${public_key}"
+                write_secret "${encoded_did}-sts-client-secret" "${sts_client_secret}"
+              done
           env:
             - name: VAULT_ADDR
               value: http://gx-participant-vault:8200
@@ -37,6 +53,16 @@ spec:
                 secretKeyRef:
                   name: gx-participant-stack
                   key: EDC_VAULT_HASHICORP_TOKEN
+            - name: PARTICIPANT_DID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_IH_API_SUPERUSER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: EDC_IH_API_SUPERUSER_KEY
           volumeMounts:
             - name: bootstrap
               mountPath: /bootstrap

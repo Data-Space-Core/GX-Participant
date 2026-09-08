@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:latest
+          image: ghcr.io/data-space-core/controlplane:edc-18
           imagePullPolicy: IfNotPresent
           env:
             - name: EDC_PARTICIPANT_ID
@@ -150,6 +150,10 @@ spec:
             - name: registry
               mountPath: /etc/registry
               readOnly: true
+            - name: controlplane-config
+              mountPath: /app/configuration.properties
+              subPath: configuration.properties
+              readOnly: true
       volumes:
         - name: participants
           configMap:
@@ -163,3 +167,6 @@ spec:
             items:
               - key: registry.json
                 path: registry.json
+        - name: controlplane-config
+          configMap:
+            name: gx-participant-controlplane-config

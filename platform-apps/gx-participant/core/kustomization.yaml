@@ -15,6 +15,7 @@ resources:
   - identityhub-service.yaml
   - identityhub-deployment.yaml
   - controlplane-service.yaml
+  - controlplane-config.yaml
   - controlplane-deployment.yaml
   - dataplane-service.yaml
   - dataplane-deployment.yaml

@@ -46,7 +46,10 @@ spec:
             - name: WEB_HTTP_MANAGEMENT_AUTH_TYPE
               value: tokenbased
             - name: WEB_HTTP_MANAGEMENT_AUTH_KEY
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: gx-participant-stack
+                  key: EDC_MANAGEMENT_API_KEY
             - name: WEB_HTTP_CONTROL_PORT
               value: "8083"
             - name: WEB_HTTP_CONTROL_PATH

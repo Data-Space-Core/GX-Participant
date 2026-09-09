@@ -55,14 +55,6 @@ spec:
               value: "8082"
             - name: WEB_HTTP_PROTOCOL_PATH
               value: /api/dsp
-            - name: WEB_HTTP_CATALOG_PORT
-              value: "8084"
-            - name: WEB_HTTP_CATALOG_PATH
-              value: /api/catalog
-            - name: WEB_HTTP_CATALOG_AUTH_TYPE
-              value: tokenbased
-            - name: WEB_HTTP_CATALOG_AUTH_KEY
-              value: password
             - name: EDC_DSP_CALLBACK_ADDRESS
               valueFrom:
                 configMapKeyRef:
@@ -130,8 +122,6 @@ spec:
               name: protocol
             - containerPort: 8083
               name: control
-            - containerPort: 8084
-              name: catalog
           readinessProbe:
             httpGet:
               path: /api/check/readiness

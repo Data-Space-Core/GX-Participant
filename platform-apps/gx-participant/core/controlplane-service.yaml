@@ -19,6 +19,3 @@ spec:
     - name: control
       port: 8083
       targetPort: 8083
-    - name: catalog
-      port: 8084
-      targetPort: 8084

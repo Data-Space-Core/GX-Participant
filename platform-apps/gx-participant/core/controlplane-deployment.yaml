@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-018-v4
+          image: ghcr.io/data-space-core/controlplane:edc-018-v5
           imagePullPolicy: IfNotPresent
           env:
             - name: EDC_PARTICIPANT_ID
@@ -44,12 +44,15 @@ spec:
             - name: WEB_HTTP_MANAGEMENT_PATH
               value: /api/management
             - name: WEB_HTTP_MANAGEMENT_AUTH_TYPE
-              value: tokenbased
-            - name: WEB_HTTP_MANAGEMENT_AUTH_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: gx-participant-stack
-                  key: EDC_MANAGEMENT_API_KEY
+              value: delegated
+            - name: WEB_HTTP_MANAGEMENT_AUTH_DAC_KEY_URL
+              value: https://dil.collab-cloud.eu/auth/realms/gx-participant1/protocol/openid-connect/certs
+            - name: WEB_HTTP_MANAGEMENT_AUTH_DAC_AUDIENCE
+              value: connector-api
+            - name: EDC_IAM_OAUTH2_ISSUER
+              value: https://dil.collab-cloud.eu/auth/realms/gx-participant1
+            - name: EDC_IAM_OAUTH2_JWKS_URL
+              value: https://dil.collab-cloud.eu/auth/realms/gx-participant1/protocol/openid-connect/certs
             - name: WEB_HTTP_CONTROL_PORT
               value: "8083"
             - name: WEB_HTTP_CONTROL_PATH

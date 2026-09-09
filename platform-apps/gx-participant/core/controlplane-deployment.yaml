@@ -23,6 +23,11 @@ spec:
                 configMapKeyRef:
                   name: participant-settings
                   key: PARTICIPANT_DID
+            - name: EDC_PARTICIPANT_CONTEXT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
             - name: EDC_IAM_ISSUER_ID
               valueFrom:
                 configMapKeyRef:

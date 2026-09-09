@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-2
+          image: ghcr.io/data-space-core/controlplane:edc-018-v1
           imagePullPolicy: IfNotPresent
           env:
             - name: EDC_PARTICIPANT_ID

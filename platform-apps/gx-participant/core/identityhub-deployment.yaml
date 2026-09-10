@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: identity-hub
-          image: ghcr.io/data-space-core/identity-hub:latest
+          image: ghcr.io/data-space-core/identity-hub:edc-018
           imagePullPolicy: IfNotPresent
           env:
             - name: EDC_IH_IAM_ID

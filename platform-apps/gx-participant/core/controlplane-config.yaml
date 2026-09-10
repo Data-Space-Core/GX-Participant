@@ -7,3 +7,8 @@ data:
   configuration.properties: |
     edc.iam.trusted-issuer.material.id=did:web:dil-connector.material.dil.collab-cloud.eu:issuer
     edc.iam.trusted-issuer.material.supportedtypes=["VerifiableCredential","MembershipCredential"]
+    # Default DCP scope requested when GX calls a remote DSP endpoint.
+    edc.iam.dcp.scopes.membership.id=membership
+    edc.iam.dcp.scopes.membership.type=DEFAULT
+    edc.iam.dcp.scopes.membership.value=org.eclipse.dspace.dcp.vc.type:MembershipCredential:read
+    edc.iam.dcp.scopes.membership.profile=*

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: identity-hub
-          image: ghcr.io/data-space-core/identity-hub:edc-018-sql-vault-3
+          image: ghcr.io/data-space-core/identity-hub:edc-018-sql-vault-4
           imagePullPolicy: Always
           env:
             - name: EDC_IH_IAM_ID

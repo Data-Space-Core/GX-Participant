@@ -61,6 +61,10 @@ spec:
               value: "8082"
             - name: WEB_HTTP_PROTOCOL_PATH
               value: /api/dsp
+            # The control plane uses virtual participant contexts. Make the
+            # bundled DSP profiles available to the configured participant.
+            - name: EDC_DATASPACE_ENABLE_PROFILES_ALL
+              value: "true"
             - name: EDC_DSP_CALLBACK_ADDRESS
               valueFrom:
                 configMapKeyRef:

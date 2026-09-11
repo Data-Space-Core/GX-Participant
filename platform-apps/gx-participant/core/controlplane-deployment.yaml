@@ -21,10 +21,18 @@ spec:
         - name: controlplane
           image: ghcr.io/data-space-core/controlplane:edc-018-dataplane-s3
           imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+          args:
+            - >-
+              exec java
+              -Dedc.participant.id="${EDC_PARTICIPANT_ID}"
+              -Dedc.participant.context.id="${EDC_PARTICIPANT_CONTEXT_ID}"
+              -jar /app/controlplane.jar
+              --log-level=DEBUG
           # Keep protocol and negotiation diagnostics in the pod logs while
           # troubleshooting the GX participant deployment.
-          args:
-            - --log-level=DEBUG
           env:
             - name: EDC_PARTICIPANT_ID
               valueFrom:

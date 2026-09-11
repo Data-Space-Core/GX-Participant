@@ -60,7 +60,7 @@ If your repository URL differs, update:
 This stack deploys the participant runtime side:
 
 - `gx-participant-controlplane`
-- `gx-participant-dataplane`
+  - includes the embedded dataplane runtime
 - `gx-participant-identityhub`
 - `gx-participant-did`
 - `gx-participant-postgres`
@@ -80,14 +80,12 @@ Use the local Eclipse EDC `MinimumViableDataspace` checkout to build the partici
 
 This expects the MVD repo root and tags/pushes:
 
-- `controlplane:latest` -> `ghcr.io/your-org/controlplane:latest`
-- `dataplane:latest` -> `ghcr.io/your-org/dataplane:latest`
+- `controlplane:edc-018-dataplane-s3` -> `ghcr.io/your-org/controlplane:edc-018-dataplane-s3`
 - `identity-hub:latest` -> `ghcr.io/your-org/identity-hub:latest`
 
 After pushing the images, update:
 
 - `platform-apps/gx-participant/core/controlplane-deployment.yaml`
-- `platform-apps/gx-participant/core/dataplane-deployment.yaml`
 - `platform-apps/gx-participant/core/identityhub-deployment.yaml`
 
 ### 2. Build and publish the bootstrap image
@@ -196,11 +194,7 @@ kubectl apply -n argocd -f platform-apps/argocd/gx-participant-application.yaml
   - `8081` management API
   - `8082` DSP protocol
   - `8083` control API
-  - `8084` catalog API
-- `gx-participant-dataplane`
-  - `8080` health
-  - `8083` control API
-  - `11001` public transfer endpoint
+  - `11001` embedded public transfer endpoint
 - `gx-participant-identityhub`
   - `7080` health
   - `7081` credentials API
@@ -219,7 +213,7 @@ kubectl apply -n argocd -f platform-apps/argocd/gx-participant-application.yaml
 One clean host model is:
 
 - `cp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-controlplane`
-- `dp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-dataplane`
+- `dp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-controlplane:11001`
 - `identity.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-identityhub`
 
 If you stay with a single hostname plus paths, the minimum routes are:
@@ -231,7 +225,7 @@ If you stay with a single hostname plus paths, the minimum routes are:
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/management/...` -> `gx-participant-controlplane:8081`
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/catalog/...` -> `gx-participant-controlplane:8084`
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/dsp/...` -> `gx-participant-controlplane:8082`
-- `https://gx-participant1.dil.collab-cloud.eu/dp/api/public/...` -> `gx-participant-dataplane:11001`
+- `https://gx-participant1.dil.collab-cloud.eu/dp/api/public/...` -> `gx-participant-controlplane:11001`
 
 For path-based routing, strip the external prefix before forwarding:
 

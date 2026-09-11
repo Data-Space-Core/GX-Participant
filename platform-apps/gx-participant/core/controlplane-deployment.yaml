@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:contract_correlation_id
+          image: ghcr.io/data-space-core/controlplane:edc-018-dataplane-s3
           imagePullPolicy: IfNotPresent
           # Keep protocol and negotiation diagnostics in the pod logs while
           # troubleshooting the GX participant deployment.
@@ -61,6 +61,11 @@ spec:
               value: "8083"
             - name: WEB_HTTP_CONTROL_PATH
               value: /api/control
+            # Public data-plane API embedded in this runtime.
+            - name: WEB_HTTP_PUBLIC_PORT
+              value: "11001"
+            - name: WEB_HTTP_PUBLIC_PATH
+              value: /api/public
             - name: WEB_HTTP_PROTOCOL_PORT
               value: "8082"
             - name: WEB_HTTP_PROTOCOL_PATH
@@ -127,6 +132,16 @@ spec:
                 secretKeyRef:
                   name: participant-bootstrap
                   key: participant-sts-client-secret-alias.txt
+            - name: EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID_KEY_ID
+            - name: EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: participant-private-key-alias.txt
           ports:
             - containerPort: 8080
               name: web
@@ -136,6 +151,8 @@ spec:
               name: protocol
             - containerPort: 8083
               name: control
+            - containerPort: 11001
+              name: public
           readinessProbe:
             httpGet:
               path: /api/check/readiness

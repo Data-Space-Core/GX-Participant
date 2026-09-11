@@ -19,3 +19,6 @@ spec:
     - name: control
       port: 8083
       targetPort: 8083
+    - name: public
+      port: 11001
+      targetPort: 11001

@@ -5,8 +5,8 @@ metadata:
   namespace: gx-participant
 data:
   configuration.properties: |
-    edc.iam.trusted-issuer.material.id=did:web:dil-connector.material.dil.collab-cloud.eu:issuer
-    edc.iam.trusted-issuer.material.supportedtypes=["VerifiableCredential","MembershipCredential"]
+    edc.iam.trustedissuer.material.id=did:web:dil-connector.material.dil.collab-cloud.eu:issuer
+    edc.iam.trustedissuer.material.supportedtypes=["VerifiableCredential","MembershipCredential"]
     # Default DCP scope requested when GX calls a remote DSP endpoint.
     edc.iam.dcp.scopes.membership.id=membership
     edc.iam.dcp.scopes.membership.type=DEFAULT

@@ -10,6 +10,10 @@ spec:
       app.kubernetes.io/name: gx-participant-controlplane
   template:
     metadata:
+      annotations:
+        # Bump when controlplane-config.yaml changes. The ConfigMap is mounted
+        # with subPath and therefore cannot update an existing container.
+        config-version: "participant-context-v1"
       labels:
         app.kubernetes.io/name: gx-participant-controlplane
     spec:

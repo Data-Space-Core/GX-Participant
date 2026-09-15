@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-018-pctx-builder-fix-20260915
+          image: ghcr.io/data-space-core/controlplane:edc-018-pctx-abi-fix-20260915
           imagePullPolicy: Always
           command:
             - sh

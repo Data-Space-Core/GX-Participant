@@ -27,13 +27,15 @@ spec:
           args:
             - >-
               exec java
-              -Dedc.participant.id="${EDC_PARTICIPANT_ID}"
-              -Dedc.participant.context.id="${EDC_PARTICIPANT_CONTEXT_ID}"
+              -Dedc.participant.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
+              -Dedc.participant.context.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
               -jar /app/controlplane.jar
               --log-level=DEBUG
           # Keep protocol and negotiation diagnostics in the pod logs while
           # troubleshooting the GX participant deployment.
           env:
+            - name: EDC_FS_CONFIG
+              value: /app/configuration.properties
             - name: EDC_PARTICIPANT_ID
               valueFrom:
                 configMapKeyRef:

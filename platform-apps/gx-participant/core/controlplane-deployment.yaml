@@ -13,13 +13,13 @@ spec:
       annotations:
         # Bump when controlplane-config.yaml changes. The ConfigMap is mounted
         # with subPath and therefore cannot update an existing container.
-        config-version: "participant-context-v3"
+        config-version: "participant-context-v5-query-fix"
       labels:
         app.kubernetes.io/name: gx-participant-controlplane
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-dataplane-selector-20260916-9
+          image: ghcr.io/data-space-core/controlplane:edc-18-query-fix-20260916-1
           imagePullPolicy: Always
           command:
             - java

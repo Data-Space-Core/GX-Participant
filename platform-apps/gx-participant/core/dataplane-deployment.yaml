@@ -11,13 +11,13 @@ spec:
   template:
     metadata:
       annotations:
-        config-version: "dataplane-018-http-s3-20260916-4"
+        config-version: "dataplane-018-http-s3-20260916-5"
       labels:
         app.kubernetes.io/name: gx-participant-dataplane
     spec:
       containers:
         - name: dataplane
-          image: ghcr.io/data-space-core/dataplane:edc-018-http-s3-20260916-4
+          image: ghcr.io/data-space-core/dataplane:edc-018-http-s3-20260916-5
           imagePullPolicy: Always
           command:
             - java

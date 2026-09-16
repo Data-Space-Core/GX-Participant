@@ -13,39 +13,31 @@ spec:
       annotations:
         # Bump when controlplane-config.yaml changes. The ConfigMap is mounted
         # with subPath and therefore cannot update an existing container.
-        config-version: "participant-context-v2"
+        config-version: "participant-context-v3"
       labels:
         app.kubernetes.io/name: gx-participant-controlplane
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-dataplane-selector-20260916-3
+          image: ghcr.io/data-space-core/controlplane:edc-18-dataplane-selector-20260916-5
           imagePullPolicy: Always
           command:
-            - sh
-            - -c
+            - java
           args:
-            - >-
-              exec java
-              -Dedc.participant.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
-              -Dedc.participant.context.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
-              -jar /app/controlplane.jar
-              --log-level=DEBUG
+            - -Dedc.participant.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
+            - -Dedc.participant.context.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
+            - -jar
+            - /app/controlplane.jar
+            - --log-level=DEBUG
           # Keep protocol and negotiation diagnostics in the pod logs while
           # troubleshooting the GX participant deployment.
           env:
             - name: EDC_FS_CONFIG
               value: /app/configuration.properties
             - name: EDC_PARTICIPANT_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: participant-settings
-                  key: PARTICIPANT_DID
+              value: did:web:gx-participant1.dil.collab-cloud.eu:identity
             - name: EDC_PARTICIPANT_CONTEXT_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: participant-settings
-                  key: PARTICIPANT_DID
+              value: did:web:gx-participant1.dil.collab-cloud.eu:identity
             - name: EDC_IAM_ISSUER_ID
               valueFrom:
                 configMapKeyRef:

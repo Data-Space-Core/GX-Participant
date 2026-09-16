@@ -103,6 +103,66 @@ Identity Hub remains a separate image. Update its image reference in
 `platform-apps/gx-participant/core/identityhub-deployment.yaml` when building
 or publishing a new Identity Hub image.
 
+### 1a. Authenticate dataplane self-registration
+
+The dataplane registers itself with the control plane during startup. The
+`gx-participant-dataplane` Deployment reads the value from
+`Secret/gx-participant-dataplane-auth`, key `authorization`, and passes it as
+the `Authorization` header. The value must be a non-expired Keycloak access
+token prefixed with `Bearer `.
+
+This token is for the EDC management API. It is not a MinIO or S3 token. The
+Keycloak client must be confidential, have service accounts enabled, grant the
+`management-api:admin` scope, and include `connector-api` in its audience.
+
+Generate a token without putting the client secret in the repository:
+
+```bash
+cd /home/vmuser/Eclipse-Connector
+
+jq '.scope="openid management-api:admin" | del(.client_secret)' \
+  test_scripts/keycloak.json > /tmp/gx-keycloak.json
+
+export KEYCLOAK_CLIENT_SECRET='your-management-api-client-secret'
+export GXTOKEN="$(python3 test_scripts/get-token.py \
+  --config /tmp/gx-keycloak.json)"
+
+python3 test_scripts/check-token.py "$GXTOKEN"
+```
+
+Apply the token to the tenant cluster and restart the dataplane:
+
+```bash
+AUTH_VALUE="Bearer $GXTOKEN"
+
+kubectl -n gx-participant create secret generic gx-participant-dataplane-auth \
+  --from-literal=authorization="$AUTH_VALUE" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl -n gx-participant rollout restart deployment/gx-participant-dataplane
+kubectl -n gx-participant rollout status deployment/gx-participant-dataplane \
+  --timeout=180s
+```
+
+Check the secret without printing the token:
+
+```bash
+kubectl -n gx-participant get secret gx-participant-dataplane-auth \
+  -o jsonpath='{.data.authorization}' | base64 -d | \
+  awk '{printf "length=%d prefix=%s\\n", length($0), substr($0,1,7)}'
+```
+
+The expected prefix is `Bearer ` and the length must be greater than `7`.
+Renew the secret and restart the dataplane when the Keycloak token expires.
+
+The published EDC 0.18 dataplane selector client uses deprecated
+`POST /api/management/v4/dataplanes` registration. The patched dataplane
+launcher in `Eclipse-Connector` replaces it with the current
+data-plane-signaling registration message and `PUT` method. The control plane
+must expose that registration API at the configured URL; otherwise a `405`
+indicates that the deployed control-plane image is stale or lacks the
+data-plane-signaling module. This is not an S3 credential issue.
+
 ### 2. Build and publish the bootstrap image
 
 The Argo CD application includes a `PreSync` job that generates participant bootstrap

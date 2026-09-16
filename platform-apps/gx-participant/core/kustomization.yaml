@@ -17,3 +17,6 @@ resources:
   - controlplane-service.yaml
   - controlplane-config.yaml
   - controlplane-deployment.yaml
+  - dataplane-config.yaml
+  - dataplane-service.yaml
+  - dataplane-deployment.yaml

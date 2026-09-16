@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-dataplane-selector-20260916-2
+          image: ghcr.io/data-space-core/controlplane:edc-18-dataplane-selector-20260916-3
           imagePullPolicy: Always
           command:
             - sh
@@ -75,11 +75,6 @@ spec:
               value: "8083"
             - name: WEB_HTTP_CONTROL_PATH
               value: /api/control
-            # Public data-plane API embedded in this runtime.
-            - name: WEB_HTTP_PUBLIC_PORT
-              value: "11001"
-            - name: WEB_HTTP_PUBLIC_PATH
-              value: /api/public
             - name: WEB_HTTP_PROTOCOL_PORT
               value: "8082"
             - name: WEB_HTTP_PROTOCOL_PATH
@@ -165,8 +160,6 @@ spec:
               name: protocol
             - containerPort: 8083
               name: control
-            - containerPort: 11001
-              name: public
           readinessProbe:
             httpGet:
               path: /api/check/readiness

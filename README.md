@@ -60,7 +60,8 @@ If your repository URL differs, update:
 This stack deploys the participant runtime side:
 
 - `gx-participant-controlplane`
-  - includes the embedded dataplane runtime
+- `gx-participant-dataplane`
+  - HTTP pull/push and S3 transfer runtime
 - `gx-participant-identityhub`
 - `gx-participant-did`
 - `gx-participant-postgres`
@@ -72,21 +73,35 @@ It is intended to be installed inside a tenant vCluster such as `gx-participant1
 
 ### 1. Build and publish the participant runtime images
 
-Use the local Eclipse EDC `MinimumViableDataspace` checkout to build the participant images:
+Build the control plane and the standalone EDC 0.18 data plane from the
+`Eclipse-Connector` checkout:
 
 ```bash
-./scripts/build-mvd-participant-images.sh /path/to/MinimumViableDataspace ghcr.io/your-org
+cd /home/vmuser/Eclipse-Connector
+
+./gradlew --no-daemon \
+  :launchers:controlplane:shadowJar \
+  :launchers:controlplane:verifyServiceDescriptors \
+  :launchers:dataplane:shadowJar \
+  :launchers:dataplane:verifyServiceDescriptors
+
+docker build -f Dockerfile.controlplane \
+  -t ghcr.io/data-space-core/controlplane:<controlplane-tag> .
+docker build -f Dockerfile.dataplane \
+  -t ghcr.io/data-space-core/dataplane:<dataplane-tag> .
+
+docker push ghcr.io/data-space-core/controlplane:<controlplane-tag>
+docker push ghcr.io/data-space-core/dataplane:<dataplane-tag>
 ```
 
-This expects the MVD repo root and tags/pushes:
+The dataplane image provides HTTP pull/push and S3 support. Update the image
+tags in `controlplane-deployment.yaml` and `dataplane-deployment.yaml` before
+syncing Argo CD. Keep the control plane and dataplane tags immutable; avoid
+using `latest` for a deployment that must be reproducible.
 
-- `controlplane:edc-018-dataplane-s3` -> `ghcr.io/your-org/controlplane:edc-018-dataplane-s3`
-- `identity-hub:latest` -> `ghcr.io/your-org/identity-hub:latest`
-
-After pushing the images, update:
-
-- `platform-apps/gx-participant/core/controlplane-deployment.yaml`
-- `platform-apps/gx-participant/core/identityhub-deployment.yaml`
+Identity Hub remains a separate image. Update its image reference in
+`platform-apps/gx-participant/core/identityhub-deployment.yaml` when building
+or publishing a new Identity Hub image.
 
 ### 2. Build and publish the bootstrap image
 
@@ -194,7 +209,10 @@ kubectl apply -n argocd -f platform-apps/argocd/gx-participant-application.yaml
   - `8081` management API
   - `8082` DSP protocol
   - `8083` control API
-  - `11001` embedded public transfer endpoint
+- `gx-participant-dataplane`
+  - `8080` health
+  - `8083` internal control API
+  - `11001` public transfer endpoint
 - `gx-participant-identityhub`
   - `7080` health
   - `7081` credentials API
@@ -213,7 +231,7 @@ kubectl apply -n argocd -f platform-apps/argocd/gx-participant-application.yaml
 One clean host model is:
 
 - `cp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-controlplane`
-- `dp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-controlplane:11001`
+- `dp.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-dataplane:11001`
 - `identity.gx-participant1.dil.collab-cloud.eu` -> `gx-participant-identityhub`
 
 If you stay with a single hostname plus paths, the minimum routes are:
@@ -225,7 +243,7 @@ If you stay with a single hostname plus paths, the minimum routes are:
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/management/...` -> `gx-participant-controlplane:8081`
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/catalog/...` -> `gx-participant-controlplane:8084`
 - `https://gx-participant1.dil.collab-cloud.eu/cp/api/dsp/...` -> `gx-participant-controlplane:8082`
-- `https://gx-participant1.dil.collab-cloud.eu/dp/api/public/...` -> `gx-participant-controlplane:11001`
+- `https://gx-participant1.dil.collab-cloud.eu/dp/api/public/...` -> `gx-participant-dataplane:11001`
 
 For path-based routing, strip the external prefix before forwarding:
 

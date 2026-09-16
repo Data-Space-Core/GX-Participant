@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gx-participant-dataplane-config
+  namespace: gx-participant
+data:
+  configuration.properties: |
+    edc.runtime.id=gx-participant1-dataplane
+    edc.participant.id=did:web:gx-participant1.dil.collab-cloud.eu:identity
+    edc.dpf.selector.url=http://gx-participant-controlplane:8081/api/management/v4/dataplanes
+    edc.control.endpoint=http://gx-participant-dataplane:8083/api/control

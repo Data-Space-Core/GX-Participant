@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gx-participant-dataplane
+  namespace: gx-participant
+spec:
+  selector:
+    app.kubernetes.io/name: gx-participant-dataplane
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    - name: control
+      port: 8083
+      targetPort: 8083
+    - name: public
+      port: 11001
+      targetPort: 11001

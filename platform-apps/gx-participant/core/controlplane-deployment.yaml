@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-query-fix-20260916-1
+          image: ghcr.io/data-space-core/controlplane:edc-18-dps-20260917-1
           imagePullPolicy: Always
           command:
             - java

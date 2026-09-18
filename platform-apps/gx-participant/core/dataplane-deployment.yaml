@@ -63,6 +63,8 @@ spec:
                   key: PARTICIPANT_DID
             - name: EDC_DPF_COMPATIBILITY_CONTROLPLANE_ENDPOINT
               value: http://gx-participant-controlplane:8083/api/control
+            - name: EDC_DATAPLANE_ENDPOINT
+              value: http://gx-participant-dataplane:8083/v1/dataflows
             - name: EDC_CONTROLPLANE_API_AUTH_VALUE
               valueFrom:
                 secretKeyRef:

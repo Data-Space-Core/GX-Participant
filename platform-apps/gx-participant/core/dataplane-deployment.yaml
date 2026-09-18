@@ -11,13 +11,13 @@ spec:
   template:
     metadata:
       annotations:
-        config-version: "dataplane-018-http-s3-s3-copy-source-merge-20260918-1"
+        config-version: "dataplane-native-s3-dps-20260918-1"
       labels:
         app.kubernetes.io/name: gx-participant-dataplane
     spec:
       containers:
         - name: dataplane
-          image: ghcr.io/data-space-core/dataplane:edc-018-http-s3-s3-copy-source-merge-20260918-1
+          image: ghcr.io/data-space-core/dataplane:edc-018-native-s3-dps-20260918-1
           imagePullPolicy: Always
           command:
             - java
@@ -35,6 +35,29 @@ spec:
               value: http://gx-participant-controlplane:8081/api/management/v4/dataplanes
             - name: EDC_CONTROL_ENDPOINT
               value: http://gx-participant-dataplane:8083/api/control
+            - name: EDC_DATAPLANE_ID
+              value: gx-participant1-dataplane
+            - name: EDC_DPF_COMPATIBILITY_AUTHORIZATION_TYPE
+              value: oauth2_client_credentials
+            - name: EDC_DPF_COMPATIBILITY_AUTHORIZATION_TOKEN_ENDPOINT
+              value: http://gx-participant-identityhub:7086/api/sts/token
+            - name: EDC_DPF_COMPATIBILITY_AUTHORIZATION_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_DPF_COMPATIBILITY_AUTHORIZATION_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: participant-bootstrap
+                  key: sts-client-secret.txt
+            - name: EDC_DPF_COMPATIBILITY_CONTROLPLANE_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
+            - name: EDC_DPF_COMPATIBILITY_CONTROLPLANE_ENDPOINT
+              value: http://gx-participant-controlplane:8083/api/control
             - name: EDC_CONTROLPLANE_API_AUTH_VALUE
               valueFrom:
                 secretKeyRef:

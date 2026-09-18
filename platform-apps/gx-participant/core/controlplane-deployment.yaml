@@ -75,11 +75,11 @@ spec:
             # bundled DSP profiles available to the configured participant.
             - name: EDC_DATASPACE_ENABLE_PROFILES_ALL
               value: "true"
-            # The GX dataplane is the EDC 0.18 runtime. Use its complete
-            # /dataflows/start request instead of the newer /started
-            # notification endpoint.
+            # Use native Data Plane Signaling. The dataplane receives the
+            # provider source in the standard /started notification and
+            # reports completion after copying it to the GX destination.
             - name: EDC_DATAPLANE_SIGNALING_LEGACY_COMPATIBILITY_ENABLED
-              value: "true"
+              value: "false"
             - name: EDC_DSP_CALLBACK_ADDRESS
               valueFrom:
                 configMapKeyRef:

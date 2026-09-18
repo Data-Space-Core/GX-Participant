@@ -13,13 +13,13 @@ spec:
       annotations:
         # Bump when controlplane-config.yaml changes. The ConfigMap is mounted
         # with subPath and therefore cannot update an existing container.
-        config-version: "participant-context-v5-dataplane-wire-20260917-3"
+        config-version: "participant-context-v5-dataplane-wire-20260918-4"
       labels:
         app.kubernetes.io/name: gx-participant-controlplane
     spec:
       containers:
         - name: controlplane
-          image: ghcr.io/data-space-core/controlplane:edc-18-native-s3-dps-20260918-3
+          image: ghcr.io/data-space-core/controlplane:edc-18-native-s3-dps-20260918-4
           imagePullPolicy: Always
           command:
             - java

@@ -67,6 +67,12 @@ spec:
               value: "8083"
             - name: WEB_HTTP_CONTROL_PATH
               value: /api/control
+            # EDC 0.18 Data Plane Signaling is registered on the signaling
+            # API context, not the legacy control context.
+            - name: WEB_HTTP_SIGNALING_PORT
+              value: "8083"
+            - name: WEB_HTTP_SIGNALING_PATH
+              value: /api/control
             - name: WEB_HTTP_PROTOCOL_PORT
               value: "8082"
             - name: WEB_HTTP_PROTOCOL_PATH

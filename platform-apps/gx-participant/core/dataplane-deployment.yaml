@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dataplane
-          image: ghcr.io/data-space-core/dataplane:edc-018-native-s3-dps-20260918-4
+          image: ghcr.io/data-space-core/dataplane:edc-018-native-s3-dps-20260918-5
           imagePullPolicy: Always
           command:
             - java
@@ -64,7 +64,7 @@ spec:
             - name: EDC_DPF_COMPATIBILITY_CONTROLPLANE_ENDPOINT
               value: http://gx-participant-controlplane:8083/api/control
             - name: EDC_DATAPLANE_ENDPOINT
-              value: http://gx-participant-dataplane:8083/v1/dataflows
+              value: http://gx-participant-dataplane:8080/api/v1/dataflows
             - name: EDC_CONTROLPLANE_API_AUTH_VALUE
               valueFrom:
                 secretKeyRef:

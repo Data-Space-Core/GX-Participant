@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dataplane
-          image: ghcr.io/data-space-core/dataplane:edc-018-native-s3-dps-20260918-1
+          image: ghcr.io/data-space-core/dataplane:edc-018-native-s3-dps-20260918-2
           imagePullPolicy: Always
           command:
             - java
@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: participant-bootstrap
                   key: sts-client-secret.txt
+            - name: EDC_DPF_COMPATIBILITY_AUTHORIZATION_AUDIENCE
+              valueFrom:
+                configMapKeyRef:
+                  name: participant-settings
+                  key: PARTICIPANT_DID
             - name: EDC_DPF_COMPATIBILITY_CONTROLPLANE_ID
               valueFrom:
                 configMapKeyRef:
